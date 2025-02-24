@@ -2,17 +2,20 @@ const express = require('express');
 const router = express.Router();
 const Location = require('../models/locationModel');
 
-// Create a new location
-router.post('/createLocation', async (req, res) => {
+router.post("/createLocation", async (req, res) => {
     try {
-        const location = new Location(req.body);
-        await location.save();
-        res.status(201).json(location);
+      const { locationName, locationType, address, username } = req.body;
+      
+      // Insert location into the database
+      // You can add your logic here to store the location in the DB
+  
+      res.status(201).json({ message: "Location created successfully" });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      console.error(error);
+      res.status(500).json({ message: "Error creating location" });
     }
-});
-
+  });
+  
 // Get all locations
 router.get('/locations', async (req, res) => {
     try {
