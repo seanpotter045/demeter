@@ -1,0 +1,46 @@
+### Base URL
+@baseUrl = http://localhost:8081/api
+
+### Create a New User
+POST {{baseUrl}}/users/createUser
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "password123"
+}
+
+### Login User
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "password123"
+}
+
+### Get All Users
+GET {{baseUrl}}/users
+
+### Get a User by ID (Replace {{userId}} with an actual ID)
+@userId = REPLACE_WITH_ACTUAL_USER_ID
+GET {{baseUrl}}/users/67ad538597cd74ec06568d81
+
+### Update a User by ID (Replace {{userId}} with an actual ID)
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+    "username": "updateduser",
+    "email": "updated@example.com"
+}
+
+### Delete a User by ID (Replace {{userId}} with an actual ID)
+DELETE {{baseUrl}}/users/testuser
+
+### Get All Locations
+GET {{baseUrl}}/locations
+
+### Get All Reviews
+GET {{baseUrl}}/reviews
