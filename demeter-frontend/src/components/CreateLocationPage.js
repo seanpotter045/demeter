@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CreateLocationPage = () => {
   const [locationName, setLocationName] = useState('');
@@ -7,6 +8,7 @@ const CreateLocationPage = () => {
   const [address, setAddress] = useState('');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize navigation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,13 +23,17 @@ const CreateLocationPage = () => {
 
       console.log("Sending location data:", locationData); // Log the data for debugging
 
-      const response = await axios.post('http://localhost:5000/api/locations/createLocation', locationData, {
+      const response = await axios.post('http://localhost:8081/api/locations/createLocation', locationData, {
         headers: {
           'Content-Type': 'application/json',
         }
       });
 
       console.log('Location created:', response.data);
+
+      // Redirect to landing page after successful submission
+      navigate('/landingPage');
+
     } catch (error) {
       console.error('Error creating location:', error);
       setError('Error creating location');

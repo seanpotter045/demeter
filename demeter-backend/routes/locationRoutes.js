@@ -3,17 +3,22 @@ const router = express.Router();
 const Location = require('../models/locationModel');
 
 router.post("/createLocation", async (req, res) => {
-    try {
       const { locationName, locationType, address, username } = req.body;
       
-      // Insert location into the database
-      // You can add your logic here to store the location in the DB
-  
-      res.status(201).json({ message: "Location created successfully" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error creating location" });
-    }
+      try {
+              const existingLocation = await Location.findOne({ locationName });
+              if (existingLocation) {
+                  return res.status(400).send({ message: "Location already exists" });
+              }
+      
+              const newLocation = new Location({ locationName, username, locationType, address });
+              await newLocation.save();
+      
+              res.status(201).send({ message: "Location created successfully" });
+          } catch (err) {
+              console.error('Error creating location:', err);
+              res.status(500).send({ message: 'Error creating location' });
+          }
   });
   
 // Get all locations

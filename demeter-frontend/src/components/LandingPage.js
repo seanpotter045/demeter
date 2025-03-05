@@ -27,7 +27,6 @@ export default function LandingPage() {
   };
 
   const handleCreateLocation = () => {
-    // Pass the logged-in user's username to the CreateLocationPage
     navigate('/create-location', { state: { username: user.username } });
   };
 
