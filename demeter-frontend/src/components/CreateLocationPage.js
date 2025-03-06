@@ -6,6 +6,7 @@ const CreateLocationPage = () => {
   const [locationName, setLocationName] = useState('');
   const [locationType, setLocationType] = useState('');
   const [address, setAddress] = useState('');
+  const [description, setDescription] = useState('');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Initialize navigation
@@ -18,10 +19,11 @@ const CreateLocationPage = () => {
         locationName,
         locationType,
         address,
-        username: user.username, // Automatically populate username field
+        description,
+        username: user.username,
       };
 
-      console.log("Sending location data:", locationData); // Log the data for debugging
+      console.log("Sending location data:", locationData);
 
       const response = await axios.post('http://localhost:8081/api/locations/createLocation', locationData, {
         headers: {
@@ -66,6 +68,14 @@ const CreateLocationPage = () => {
             type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Description:</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
         <button type="submit">Create Location</button>
