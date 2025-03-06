@@ -12,10 +12,10 @@ const newReviewSchema = new mongoose.Schema(
             required: true,
             label: "username",
         },
-        discription: {
+        description: {
             type: String,
             required: true,
-            label: "discription",
+            label: "description",
         },
         rating: {
             type: Number,

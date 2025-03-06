@@ -22,6 +22,11 @@ const newLocationSchema = new mongoose.Schema(
             required: true,
             label: "address",
         },
+        description: {
+            type: String,
+            required: true,
+            label: "description",
+        },
     },
     { collection: "locations" }
 );

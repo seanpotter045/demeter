@@ -13,6 +13,26 @@ router.post('/createReview', async (req, res) => {
     }
 });
 
+router.post('/locations/:id/review', async (req, res) => {
+    const { username, rating, description } = req.body;
+    try {
+        const location = await Location.findById(req.params.id);
+        if (!location) return res.status(404).json({ error: "Location not found" });
+
+        const newReview = new Review({
+            locationName: location.locationName,
+            username,
+            rating,
+            description,
+        });
+
+        await newReview.save();
+        res.status(201).json({ message: "Review added successfully", review: newReview });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Get all reviews
 router.get('/reviews', async (req, res) => {
     try {

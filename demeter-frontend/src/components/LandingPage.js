@@ -1,33 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';  // Import Link
+import axios from 'axios';
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
+  const [recentLocations, setRecentLocations] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser)); // Parse the user data from localStorage
+        setUser(JSON.parse(storedUser));
       } catch (error) {
         console.error('Error parsing user data from localStorage', error);
-        setUser(null); // If error occurs, reset the user state
+        setUser(null);
       }
     } else {
-      setUser(null); // No user data in localStorage
+      setUser(null);
     }
-  }, []); // Run only on initial render
+
+    // Fetch recent locations
+    axios.get('http://localhost:8081/api/locations/recent')
+      .then(response => setRecentLocations(response.data))
+      .catch(error => console.error('Error fetching recent locations:', error));
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('user'); // Remove user data from localStorage
-    setUser(null); // Reset user state
-    navigate('/'); // Redirect to home or login page
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/');
   };
 
   const handleCreateLocation = () => {
-    navigate('/create-location', { state: { username: user.username } });
+    navigate('/create-location', { state: { username: user?.username } });
   };
 
   return (
@@ -55,6 +61,28 @@ export default function LandingPage() {
       ) : (
         <p>No user data found</p>
       )}
+
+      {/* Recent Locations */}
+      <div className="mt-8 w-full max-w-2xl">
+        <h2 className="text-2xl font-semibold mb-4">Recent Locations</h2>
+        {recentLocations.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4">
+            {recentLocations.map((location, index) => (
+              <div key={index} className="p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-lg">
+                <Link to={`/locations/${location._id}`}>
+                  <h3 className="text-lg font-bold text-blue-600 hover:text-blue-800">{location.locationName}</h3>
+                </Link>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Created by: {location.username}</p>
+                <p className="text-sm">Type: {location.locationType}</p>
+                <p className="text-sm">Address: {location.address}</p>
+                <p className="text-sm">Description: {location.description}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No recent locations found.</p>
+        )}
+      </div>
     </div>
   );
 }

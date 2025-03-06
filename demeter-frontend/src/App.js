@@ -4,6 +4,7 @@ import LoginPage from './components/LoginPage';
 import LandingPage from './components/LandingPage';
 import SignUpPage from './components/SignUpPage';
 import CreateLocationPage from './components/CreateLocationPage';
+import LocationPage from './components/LocationPage';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/landingPage" element={<LandingPage />} />
           <Route path="/create-location" element={<CreateLocationPage />} />
+          <Route path="/locations/:id" element={<LocationPage />} />
           <Route path="*" element={<div>404 Page Not Found</div>} />
         </Routes>
       </div>

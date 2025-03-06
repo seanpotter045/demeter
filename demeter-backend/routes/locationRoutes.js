@@ -3,7 +3,7 @@ const router = express.Router();
 const Location = require('../models/locationModel');
 
 router.post("/createLocation", async (req, res) => {
-      const { locationName, locationType, address, username } = req.body;
+      const { locationName, locationType, address, username, description } = req.body;
       
       try {
               const existingLocation = await Location.findOne({ locationName });
@@ -11,7 +11,7 @@ router.post("/createLocation", async (req, res) => {
                   return res.status(400).send({ message: "Location already exists" });
               }
       
-              const newLocation = new Location({ locationName, username, locationType, address });
+              const newLocation = new Location({ locationName, username, locationType, address, description });
               await newLocation.save();
       
               res.status(201).send({ message: "Location created successfully" });
@@ -39,6 +39,17 @@ router.get('/locations/:id', async (req, res) => {
         res.status(200).json(location);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+
+router.get('/recent', async (req, res) => {
+    try {
+        const locations = await Location.find().sort({ createdAt: -1 }).limit(5);
+        res.json(locations);
+    } catch (error) {
+        console.error('Error fetching recent locations:', error);
+        res.status(500).json({ message: 'Error fetching locations' });
     }
 });
 
