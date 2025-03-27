@@ -33,7 +33,7 @@ export default function LandingPage() {
   };
 
   const handleCreateLocation = () => {
-    navigate('/create-location', { state: { username: user?.username } });
+    navigate('/createLocation', { state: { username: user?.username } });
   };
 
   return (

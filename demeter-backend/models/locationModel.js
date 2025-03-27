@@ -7,7 +7,7 @@ const newLocationSchema = new mongoose.Schema(
             required: true,
             label: "locationName",
         },
-        username: { //User that creates the location
+        username: {
             type: String,
             required: true,
             label: "userID",
@@ -28,7 +28,10 @@ const newLocationSchema = new mongoose.Schema(
             label: "description",
         },
     },
-    { collection: "locations" }
+    { 
+        collection: "locations",
+        timestamps: true
+    }
 );
 
-module.exports = mongoose.model('locations', newLocationSchema)
+module.exports = mongoose.model('locations', newLocationSchema);
