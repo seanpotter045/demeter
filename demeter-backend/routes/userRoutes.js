@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/userModel'); // Assuming you are importing the User model here
-const bcrypt = require('bcryptjs'); // If you're using bcrypt for password comparison
+const User = require('../models/userModel');
+const bcrypt = require('bcryptjs');
 
-// Define your routes after this
+
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -50,7 +50,7 @@ router.post('/createUser', async (req, res) => {
 });
 
 
-// Get all users
+
 router.get('/users', async (req, res) => {
     try {
         const users = await User.find();
@@ -60,7 +60,7 @@ router.get('/users', async (req, res) => {
     }
 });
 
-// Get a user by ID
+
 router.get('/users/:id', async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
@@ -71,7 +71,7 @@ router.get('/users/:id', async (req, res) => {
     }
 });
 
-// Update a user by ID
+
 router.put('/users/:id', async (req, res) => {
     try {
             const id = req.params.id;
