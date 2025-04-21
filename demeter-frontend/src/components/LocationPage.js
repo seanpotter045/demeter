@@ -19,14 +19,15 @@ export default function LocationPage() {
   }, [id]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="min-h-screen pt-20 px-4 flex flex-col items-center bg-inherit font-inknut text-brunswick">
       {/* Go Back Button */}
       <button
-        onClick={() => navigate('/landingPage')}
-        className="absolute top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={() => navigate(-1)}
+        className="absolute top-32 left-4 bg-fern text-alabaster px-4 py-2 rounded font-semibold hover:bg-hunter transition"
       >
         Go Back
       </button>
+
 
       {location ? (
         <>
@@ -37,17 +38,18 @@ export default function LocationPage() {
           <div className="mt-8 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold">Reviews</h2>
-              <Link 
-                to={`/createReview/${id}`} 
-                className="text-blue-500 hover:underline text-lg"
+              <Link
+                to={`/createReview/${id}`}
+                className="bg-fern hover:bg-sage text-alabaster px-4 py-2 rounded font-semibold transition"
               >
                 Write a Review
               </Link>
+
             </div>
             
             {reviews.length > 0 ? (
               reviews.map((review, index) => (
-                <div key={index} className="p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-lg mb-4">
+                <div key={index} className="p-4 border rounded-lg bg-alabaster shadow-lg mb-4">
                   <p><strong>{review.username}</strong> - Rating: {review.rating}</p>
                   <p>{review.description}</p>
                 </div>

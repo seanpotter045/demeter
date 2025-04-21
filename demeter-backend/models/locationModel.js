@@ -10,7 +10,7 @@ const newLocationSchema = new mongoose.Schema(
         username: {
             type: String,
             required: true,
-            label: "userID",
+            label: "username",
         },
         locationType: {
             type: String,
