@@ -1,37 +1,32 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for programmatic navigation
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); // State to handle error messages
-  const navigate = useNavigate(); // Initialize the navigate function
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple validation for empty fields
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
 
     try {
-      // Send login request to backend
       const response = await fetch('http://localhost:8081/api/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Store the user data in localStorage (or cookie)
         localStorage.setItem('user', JSON.stringify(data));
-        navigate('/landingPage'); // Navigate to the landing page after successful login
+        navigate('/landingPage');
       } else {
         setError(data.message || 'Login failed. Please check your credentials.');
       }
@@ -42,56 +37,69 @@ export default function LoginPage() {
   };
 
   const goToSignUp = () => {
-    navigate('/signup'); // Navigate to the Sign Up page
+    navigate('/signup');
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
-      <h1 className="text-4xl font-bold mb-6">Login</h1>
-      
-      {error && (
-        <div className="text-red-500 mb-4">
-          <p>{error}</p>
-        </div>
-      )}
+    <div
+      className="min-h-screen font-inknut text-brunswick bg-cover bg-center bg-no-repeat flex items-center justify-center px-4"
+      style={{ backgroundImage: `url('/OutdoorsPhoto1.jpeg')` }}
+    >
+      <div className="max-w-md w-full bg-asparagus rounded-lg shadow-md p-8">
+        <h1 className="text-3xl font-bold text-center mb-6">Log In</h1>
 
-      <form onSubmit={handleSubmit} className="w-full max-w-md">
-        <div className="mb-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-        </div>
-        <div className="mb-6">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-        >
-          Log In
-        </button>
-      </form>
+        {error && (
+          <div className="text-imperial text-center mb-4">
+            <p>{error}</p>
+          </div>
+        )}
 
-      <div className="mt-4">
-        <p className="text-gray-600 dark:text-gray-400">
-          Don't have an account?{' '}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block mb-1 font-semibold">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 text-brunswick placeholder:text-brunswick bg-alabaster border border-alabaster rounded focus:outline-none focus:ring-2 focus:ring-fern"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block mb-1 font-semibold">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 text-brunswick placeholder:text-brunswick bg-alabaster border border-alabaster rounded focus:outline-none focus:ring-2 focus:ring-fern"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
           <button
-            onClick={goToSignUp}
-            className="text-blue-500 hover:underline"
+            type="submit"
+            className="w-full bg-fern hover:bg-hunter text-alabaster font-semibold py-3 rounded transition"
           >
-            Sign Up
+            Log In
           </button>
-        </p>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p>
+            Don’t have an account?{' '}
+            <button
+              onClick={goToSignUp}
+              className="text-alabaster hover:text-hunter font-semibold underline transition"
+            >
+              Sign Up
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
