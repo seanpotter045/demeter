@@ -4,51 +4,49 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
-    }
-
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        res.json({ username: user.username, email: user.email });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-
 router.post('/createUser', async (req, res) => {
     const { username, email, password } = req.body;
-
+  
     try {
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).send({ message: "Username already exists" });
-        }
-
-        const newUser = new User({ username, email, password });
-        await newUser.save();
-
-        res.status(201).send({ message: "User created successfully" });
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const newUser = new User({ username, email, password: hashedPassword });
+      await newUser.save();
+  
+      res.status(201).json({ message: "User created successfully" });
     } catch (err) {
-        console.error('Error creating user:', err);
-        res.status(500).send({ message: 'Error creating user' });
+      console.error('Error creating user:', err);
+      res.status(500).json({ message: 'Error creating user' });
     }
-});
-
+  });
+  
+  // Login
+  router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+  
+    if (!email || !password)
+      return res.status(400).json({ message: 'Email and password are required' });
+  
+    try {
+      const user = await User.findOne({ email });
+      if (!user)
+        return res.status(400).json({ message: 'User not found' });
+  
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid)
+        return res.status(400).json({ message: 'Invalid credentials' });
+  
+      res.json({ username: user.username, email: user.email });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 
 router.get('/users', async (req, res) => {

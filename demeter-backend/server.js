@@ -1,4 +1,4 @@
-require("dotenv").config(); // Load env vars first
+require("dotenv").config(); // Load env vars
 
 const express = require("express");
 const cors = require("cors");
@@ -13,33 +13,29 @@ const SERVER_PORT = process.env.PORT || 8081;
 // Connect to MongoDB
 dbConnection();
 
-// ✅ Define allowed frontend URL for CORS
+// CORS setup
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
-const corsOptions = {
+app.use(cors({
   origin: allowedOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true, // optional, useful if you're using cookies
-};
+}));
 
-// ✅ Apply CORS middleware
-app.use(cors(corsOptions));
-
-// ✅ Middleware for JSON requests
 app.use(express.json());
 
-// ✅ Routes
-app.use("/api/locations", locationRoutes);
-app.use("/api/reviews", reviewRoutes);
+// Public routes
 app.use("/api/users", userRoutes);
 
-// ✅ Root test route
+// Protected routes (if needed you can apply middleware inside those files)
+app.use("/api/locations", locationRoutes);
+app.use("/api/reviews", reviewRoutes);
+
+// Test root route
 app.get("/", (req, res) => {
   res.send("✅ Demeter backend is running.");
 });
 
-// ✅ Start server
 app.listen(SERVER_PORT, () => {
   console.log(`🌱 Demeter backend running on port ${SERVER_PORT}`);
 });
