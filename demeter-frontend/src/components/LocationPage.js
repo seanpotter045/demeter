@@ -9,11 +9,11 @@ export default function LocationPage() {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:8081/api/locations/${id}`)
+    axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/locations/${id}`)
       .then(response => setLocation(response.data))
       .catch(error => console.error('Error fetching location details:', error));
 
-    axios.get(`http://localhost:8081/api/reviews/location/${id}`)
+    axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/reviews/location/${id}`)
       .then(response => setReviews(response.data))
       .catch(error => console.error('Error fetching reviews:', error));
   }, [id]);

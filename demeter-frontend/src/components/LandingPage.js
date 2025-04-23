@@ -18,7 +18,7 @@ export default function LandingPage() {
     }
 
     // Fetch recent locations
-    axios.get('http://localhost:8081/api/locations/recent')
+    axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/locations/recent`)
       .then(response => setRecentLocations(response.data))
       .catch(error => console.error('Error fetching recent locations:', error));
   }, []);

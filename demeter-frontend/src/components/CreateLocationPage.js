@@ -25,7 +25,7 @@ const CreateLocationPage = () => {
 
       console.log("Sending location data:", locationData);
 
-      const response = await axios.post('http://localhost:8081/api/locations/createLocation', locationData, {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/locations/createLocation`, locationData, {
         headers: {
           'Content-Type': 'application/json',
         }

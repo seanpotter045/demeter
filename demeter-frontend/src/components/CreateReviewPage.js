@@ -23,7 +23,7 @@ const CreateReviewPage = () => {
 
       console.log('Submitting review:', reviewData);
 
-      const response = await axios.post(`http://localhost:8081/api/reviews/locations/${id}/review`, reviewData);
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/reviews/locations/${id}/review`, reviewData);
 
       console.log('Review created:', response.data);
 
