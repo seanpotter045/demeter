@@ -38,7 +38,7 @@ router.post('/locations/:id/review', async (req, res) => {
 });
 
 // Get all reviews
-router.get('/reviews', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const reviews = await Review.find();
         res.status(200).json(reviews);
@@ -58,7 +58,7 @@ router.get('/location/:locationId', async (req, res) => {
 });
 
 // Get a review by ID
-router.get('/reviews/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const review = await Review.findById(req.params.id);
         if (!review) return res.status(404).json({ error: "Review not found" });
@@ -69,7 +69,7 @@ router.get('/reviews/:id', async (req, res) => {
 });
 
 // Update a review by ID
-router.put('/reviews/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
         const updatedReview = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedReview) return res.status(404).json({ error: "Review not found" });
@@ -80,7 +80,7 @@ router.put('/reviews/:id', async (req, res) => {
 });
 
 // Delete a review by ID
-router.delete('/reviews/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const deletedReview = await Review.findByIdAndDelete(req.params.id);
         if (!deletedReview) return res.status(404).json({ error: "Review not found" });
