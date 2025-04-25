@@ -1,3 +1,4 @@
+import backendURL from '../apiConfig';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +17,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/users/login`, {
+      const response = await fetch(`${backendURL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

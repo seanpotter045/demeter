@@ -1,3 +1,4 @@
+import backendURL from '../apiConfig';
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -12,7 +13,7 @@ const SearchResultsPage = () => {
   useEffect(() => {
     if (searchTerm.trim()) {
       axios
-        .get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/locations/search?q=${encodeURIComponent(searchTerm)}`)
+        .get(`${backendURL}/api/locations/search?q=${encodeURIComponent(searchTerm)}`)
         .then((res) => setResults(res.data))
         .catch((err) => console.error('Search error:', err));
     }

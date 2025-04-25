@@ -1,3 +1,4 @@
+import backendURL from '../apiConfig';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -13,11 +14,11 @@ const SignUpPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/users/createUser`, {
+      const response = await axios.post(`${backendURL}/api/users/createUser`, {
         username,
         email,
         password,
-      });
+      });      
 
       alert("Sign up successful!");
       navigate('/login');

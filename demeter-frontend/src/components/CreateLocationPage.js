@@ -1,3 +1,4 @@
+import backendURL from '../apiConfig';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,7 @@ const CreateLocationPage = () => {
 
       console.log("Sending location data:", locationData);
 
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/locations/createLocation`, locationData, {
+      const response = await axios.post(`${backendURL}/api/locations/createLocation`, locationData, {
         headers: {
           'Content-Type': 'application/json',
         }
