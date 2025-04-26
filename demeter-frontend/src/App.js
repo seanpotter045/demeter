@@ -9,6 +9,7 @@ import EditLocationPage from './components/EditLocationPage';
 import CreateReviewPage from './components/CreateReviewPage';
 import EditReviewPage from './components/EditReviewPage';
 import SearchResultsPage from './components/SearchResultsPage';
+import ProfilePage from './components/ProfilePage';
 import Navbar from './components/Navbar';
 
 const AppLayout = () => {
@@ -33,6 +34,7 @@ const AppLayout = () => {
           <Route path="/createReview/:id" element={<CreateReviewPage />} />
           <Route path="/editReview/:id" element={<EditReviewPage />} />
           <Route path="/search" element={<SearchResultsPage/>}/>
+          <Route path="/profile" element={<ProfilePage/>}/>
           <Route path="*" element={<div>404 Page Not Found</div>} />
         </Routes>
       </div>

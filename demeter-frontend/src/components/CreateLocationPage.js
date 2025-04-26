@@ -26,11 +26,11 @@ const CreateLocationPage = () => {
 
       console.log("Sending location data:", locationData);
 
-      const response = await axios.post(`${backendURL}/api/locations/createLocation`, locationData, {
+      const response = await axios.post(`${backendURL}/api/locations`, locationData, {
         headers: {
           'Content-Type': 'application/json',
         }
-      });
+      });      
 
       console.log('Location created:', response.data);
 
