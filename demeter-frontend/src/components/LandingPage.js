@@ -84,12 +84,12 @@ export default function LandingPage() {
                     {location.averageRating !== null ? (
                       renderStars(location.averageRating)
                     ) : (
-                      <p className="italic text-gray-500 text-sm ml-2">Not yet rated</p>
+                      <p className="italic text-hunter text-sm ml-2">Not yet rated</p>
                     )}
                   </div>
                 </div>
               
-                <p className="text-sm text-gray-500 mt-1">Created by: {location.username}</p>
+                <p className="text-sm text-hunter mt-1">Created by: {location.username}</p>
                 <p className="text-sm"><strong>Type:</strong> {location.locationType}</p>
                 <p className="text-sm"><strong>Address:</strong> {location.address}</p>
                 <p className="text-sm">{location.description}</p>

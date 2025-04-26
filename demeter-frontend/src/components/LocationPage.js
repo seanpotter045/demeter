@@ -49,6 +49,17 @@ export default function LocationPage() {
     return stars;
   };
 
+  const handleDeleteReview = async (reviewId) => {
+    if (window.confirm('Are you sure you want to delete this review?')) {
+      try {
+        await axios.delete(`${backendURL}/api/reviews/${reviewId}`);
+        navigate(0);
+      } catch (error) {
+        console.error('Error deleting review:', error);
+      }
+    }
+  };  
+
   return (
     <div className="min-h-screen pt-20 px-4 flex flex-col items-center bg-inherit font-inknut text-brunswick">
       {/* Go Back Button */}
@@ -61,34 +72,23 @@ export default function LocationPage() {
 
       {location ? (
         <>
-        <h1 className="text-4xl font-bold mt-8 text-center">{location.locationName}</h1>
-      
-        {/* ⭐ Average Rating */}
-        <div className="mt-2 mb-6 flex justify-center">
-          {averageRating ? (
-            <div className="flex">
-              {renderStars(averageRating)}
-            </div>
-          ) : (
-            <p className="italic text-gray-500 text-center mt-2">Not yet rated</p>
-          )}
-        </div>
-      
-        {/* 📍 Location Type */}
-        <p className="mb-2 text-lg text-center">
-          <strong>Type:</strong> {location.locationType}
-        </p>
-      
-        {/* 📍 Address */}
-        <p className="mb-2 text-lg text-center">
-          <strong>Address:</strong> {location.address}
-        </p>
-      
-        {/* 📝 Description */}
-        <p className="mb-6 text-center">
-          {location.description}
-        </p>      
-      
+          <h1 className="text-4xl font-bold mt-8 text-center">{location.locationName}</h1>
+
+          {/* Average Rating */}
+          <div className="mt-2 mb-6 flex justify-center">
+            {averageRating ? (
+              <div className="flex">
+                {renderStars(averageRating)}
+              </div>
+            ) : (
+              <p className="italic text-brunswick text-center mt-2">Not yet rated</p>
+            )}
+          </div>
+
+          <p className="mb-2 text-lg text-center"><strong>Created by:</strong> {location.username}</p>
+          <p className="mb-2 text-lg text-center"><strong>Type:</strong> {location.locationType}</p>
+          <p className="mb-2 text-lg text-center"><strong>Address:</strong> {location.address}</p>
+          <p className="mb-6 text-center">{location.description}</p>      
 
           {/* Edit / Delete if user created it */}
           {user && location.username === user.username && (
@@ -129,13 +129,31 @@ export default function LocationPage() {
                   Write a Review
                 </Link>
               )}
+
             </div>
 
             {reviews.length > 0 ? (
-              reviews.map((review, index) => (
-                <div key={index} className="p-4 border rounded-lg bg-alabaster shadow-lg mb-4">
+              reviews.map((review) => (
+                <div key={review._id} className="p-4 border rounded-lg bg-alabaster shadow-lg mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <p><strong>{review.username}</strong> - Rating: {review.rating}</p>
+
+                    {user && user.username === review.username && (
+                      <div className="flex space-x-2">
+                        <Link
+                          to={`/editReview/${review._id}`}
+                          className="bg-fern hover:bg-hunter text-alabaster px-2 py-1 rounded font-semibold text-xs transition"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteReview(review._id)}
+                          className="bg-imperial hover:bg-red-700 text-alabaster px-2 py-1 rounded font-semibold text-xs transition"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <p>{review.description}</p>
                 </div>
