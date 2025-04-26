@@ -10,11 +10,21 @@ export default function LocationPage() {
   const [reviews, setReviews] = useState([]);
   const [user, setUser] = useState(null);
   const [averageRating, setAverageRating] = useState(null);
+  const [isSaved, setIsSaved] = useState(false); // NEW: save status
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+
+      // Check if saved
+      axios.get(`${backendURL}/api/users/${parsedUser._id}`)
+        .then(res => {
+          const saved = res.data.savedLocations?.includes(id);
+          setIsSaved(saved);
+        })
+        .catch(err => console.error('Error checking saved locations:', err));
     }
 
     axios.get(`${backendURL}/api/locations/${id}`)
@@ -49,16 +59,35 @@ export default function LocationPage() {
     return stars;
   };
 
+  const handleToggleSave = async () => {
+    if (!user) {
+      alert('You must be logged in to save locations.');
+      return;
+    }
+
+    try {
+      if (isSaved) {
+        await axios.put(`${backendURL}/api/users/unsaveLocation/${user._id}`, { locationId: id });
+        setIsSaved(false);
+      } else {
+        await axios.put(`${backendURL}/api/users/saveLocation/${user._id}`, { locationId: id });
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error('Error saving/unsaving location:', error);
+    }
+  };
+
   const handleDeleteReview = async (reviewId) => {
     if (window.confirm('Are you sure you want to delete this review?')) {
       try {
         await axios.delete(`${backendURL}/api/reviews/${reviewId}`);
-        navigate(0);
+        navigate(0); // Reload to update reviews and average
       } catch (error) {
         console.error('Error deleting review:', error);
       }
     }
-  };  
+  };
 
   return (
     <div className="min-h-screen pt-20 px-4 flex flex-col items-center bg-inherit font-inknut text-brunswick">
@@ -72,7 +101,19 @@ export default function LocationPage() {
 
       {location ? (
         <>
-          <h1 className="text-4xl font-bold mt-8 text-center">{location.locationName}</h1>
+          {/* Location Name + Save/Unsave Button */}
+          <div className="flex items-center justify-center mt-8 mb-4 space-x-4">
+            <h1 className="text-4xl font-bold text-center">{location.locationName}</h1>
+            {user && user.username !== location.username && (
+              <button onClick={handleToggleSave} className="focus:outline-none">
+                <img
+                  src={isSaved ? "/SavedIcon.png" : "/NotSavedIcon.png"}
+                  alt={isSaved ? "Saved" : "Not Saved"}
+                  className="w-10 h-10"
+                />
+              </button>
+            )}
+          </div>
 
           {/* Average Rating */}
           <div className="mt-2 mb-6 flex justify-center">
@@ -85,10 +126,11 @@ export default function LocationPage() {
             )}
           </div>
 
+          {/* Location Info */}
           <p className="mb-2 text-lg text-center"><strong>Created by:</strong> {location.username}</p>
           <p className="mb-2 text-lg text-center"><strong>Type:</strong> {location.locationType}</p>
           <p className="mb-2 text-lg text-center"><strong>Address:</strong> {location.address}</p>
-          <p className="mb-6 text-center">{location.description}</p>      
+          <p className="mb-6 text-center">{location.description}</p>
 
           {/* Edit / Delete if user created it */}
           {user && location.username === user.username && (
@@ -129,7 +171,6 @@ export default function LocationPage() {
                   Write a Review
                 </Link>
               )}
-
             </div>
 
             {reviews.length > 0 ? (

@@ -32,24 +32,29 @@ router.post('/createUser', async (req, res) => {
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
   
-    if (!email || !password)
+    if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
+    }
   
     try {
       const user = await User.findOne({ email });
-      if (!user)
+      if (!user) {
         return res.status(400).json({ message: 'User not found' });
+      }
   
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid)
+      if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid credentials' });
+      }
   
-      res.json({ username: user.username, email: user.email });
-    } catch (err) {
-      console.error(err);
+      // ✅ Send username, email, and _id
+      res.json({ username: user.username, email: user.email, _id: user._id });
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: 'Server error' });
     }
   });
+  
 
 
 router.get('/users', async (req, res) => {
@@ -62,14 +67,15 @@ router.get('/users', async (req, res) => {
 });
 
 
-router.get('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json({ error: "User not found" });
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+router.get('/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
@@ -104,6 +110,105 @@ router.delete('/users/:username', async (req, res) => {
     }
 });
 
+router.post('/saveLocation/:locationId', async (req, res) => {
+  const { locationId } = req.params;
+  const { username } = req.body;
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.savedLocations.includes(locationId)) {
+      return res.status(400).json({ message: "Location already saved" });
+    }
+
+    user.savedLocations.push(locationId);
+    await user.save();
+    res.status(200).json({ message: "Location saved successfully" });
+  } catch (error) {
+    console.error('Error saving location:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post('/unsaveLocation/:locationId', async (req, res) => {
+  const { locationId } = req.params;
+  const { username } = req.body;
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.savedLocations = user.savedLocations.filter(id => id.toString() !== locationId);
+    await user.save();
+    res.status(200).json({ message: "Location unsaved successfully" });
+  } catch (error) {
+    console.error('Error unsaving location:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get('/savedLocations/:username', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username }).populate('savedLocations');
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json(user.savedLocations);
+  } catch (error) {
+    console.error('Error fetching saved locations:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put('/saveLocation/:userId', async (req, res) => {
+  const { locationId } = req.body;
+
+  if (!locationId) {
+    return res.status(400).json({ message: 'Missing locationId' });
+  }
+
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.savedLocations) {
+      user.savedLocations = [];
+    }
+
+    // If already saved, remove it (unsave)
+    if (user.savedLocations.includes(locationId)) {
+      user.savedLocations = user.savedLocations.filter(id => id.toString() !== locationId.toString());
+    } else {
+      // Otherwise, save it
+      user.savedLocations.push(locationId);
+    }
+
+    await user.save();
+    res.json({ message: 'Location saved/unsaved successfully', savedLocations: user.savedLocations });
+  } catch (error) {
+    console.error('Error saving/unsaving location:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Unsave a location
+router.put('/unsaveLocation/:userId', async (req, res) => {
+  try {
+    const { locationId } = req.body;
+    const user = await User.findById(req.params.userId);
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Remove the location from savedLocations
+    user.savedLocations = user.savedLocations.filter(id => id.toString() !== locationId);
+    await user.save();
+
+    res.status(200).json({ message: 'Location unsaved successfully' });
+  } catch (err) {
+    console.error('Error unsaving location:', err);
+    res.status(500).json({ message: 'Error unsaving location' });
+  }
+});
 
 
 module.exports = router;
