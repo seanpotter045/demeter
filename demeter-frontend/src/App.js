@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 import LoginPage from './components/LoginPage';
 import LandingPage from './components/LandingPage';
 import SignUpPage from './components/SignUpPage';
+import AllLocationsPage from './components/AllLocationsPage';
 import CreateLocationPage from './components/CreateLocationPage';
 import LocationPage from './components/LocationPage';
 import EditLocationPage from './components/EditLocationPage';
@@ -28,6 +29,7 @@ const AppLayout = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/landingPage" element={<LandingPage />} />
+          <Route path="/allLocations" element={<AllLocationsPage />} />
           <Route path="/createLocation" element={<CreateLocationPage />} />
           <Route path="/locations/:id" element={<LocationPage />} />
           <Route path="/editLocation/:id" element={<EditLocationPage />} />

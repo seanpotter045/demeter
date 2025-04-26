@@ -71,29 +71,32 @@ export default function LandingPage() {
 
       {/* Recent Locations */}
       <div className="w-full max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-4">Recent Locations</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">Recent Locations</h2>
+
+          {/* NEW "View All Locations" Button */}
+          <Link
+            to="/allLocations" // <-- make sure you add a route to this page!
+            className="bg-fern hover:bg-hunter text-alabaster px-4 py-2 rounded font-semibold transition"
+          >
+            View All
+          </Link>
+        </div>
+
         {recentLocations.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
             {recentLocations.map((location, index) => (
-              <div key={index} className="p-4 border rounded-lg bg-alabaster shadow-md">
-                <div className="flex items-center justify-between">
-                  <Link to={`/locations/${location._id}`}>
-                    <h3 className="text-lg font-bold text-fern hover:text-hunter">{location.locationName}</h3>
-                  </Link>
-                  <div className="flex ml-4">
-                    {location.averageRating !== null ? (
-                      renderStars(location.averageRating)
-                    ) : (
-                      <p className="italic text-hunter text-sm ml-2">Not yet rated</p>
-                    )}
-                  </div>
-                </div>
-              
-                <p className="text-sm text-hunter mt-1">Created by: {location.username}</p>
-                <p className="text-sm"><strong>Type:</strong> {location.locationType}</p>
-                <p className="text-sm"><strong>Address:</strong> {location.address}</p>
-                <p className="text-sm">{location.description}</p>
-              </div>            
+              <div key={index} className="p-4 border rounded-lg bg-alabaster">
+                <Link to={`/locations/${location._id}`}>
+                  <h3 className="text-lg font-bold text-fern hover:text-hunter">
+                    {location.locationName}
+                  </h3>
+                </Link>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Created by: {location.username}</p>
+                <p className="text-sm">Type: {location.locationType}</p>
+                <p className="text-sm">Address: {location.address}</p>
+                <p className="text-sm">Description: {location.description}</p>
+              </div>
             ))}
           </div>
         ) : (
