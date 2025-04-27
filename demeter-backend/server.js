@@ -8,6 +8,7 @@ const dbConnection = require("./db");
 const locationRoutes = require("./routes/locationRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const userRoutes = require("./routes/userRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 const SERVER_PORT = process.env.PORT || 8081;
 dbConnection();
@@ -33,13 +34,15 @@ app.use(cors({
 // ✅ Handle preflight requests explicitly
 app.options('*', cors());
 
-// ✅ Parse JSON
+// ✅ Parse JSON and URL-encoded data
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // ✅ API routes
 app.use("/api/users", userRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api", uploadRoutes); // 🆕 Mount uploads under /api
 
 // ✅ Root route
 app.get("/", (req, res) => {
