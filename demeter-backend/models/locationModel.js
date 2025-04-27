@@ -27,6 +27,11 @@ const newLocationSchema = new mongoose.Schema(
             required: true,
             label: "description",
         },
+        imageUrl: { 
+            type: String, 
+            required: false, // Some locations might not have an image
+            label: "imageUrl",
+        },
     },
     { 
         collection: "locations",

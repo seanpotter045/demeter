@@ -4,41 +4,50 @@ const Location = require('../models/locationModel');
 
 // ✅ Create a location
 router.post('/', async (req, res) => {
-  const { locationName, locationType, address, username, description } = req.body;
-  
+  const { locationName, locationType, address, username, description, imageUrl } = req.body;
+
   try {
     const existingLocation = await Location.findOne({ locationName });
     if (existingLocation) {
       return res.status(400).send({ message: "Location already exists" });
     }
 
-    const newLocation = new Location({ locationName, username, locationType, address, description });
+    const newLocation = new Location({
+      locationName,
+      username,
+      locationType,
+      address,
+      description,
+      imageUrl, // ✅ Now saving the uploaded S3 image URL too!
+    });
+
     await newLocation.save();
 
-    res.status(201).send({ message: "Location created successfully" });
+    res.status(201).json(newLocation); // ✅ Send back the full created location, not just a message
   } catch (err) {
     console.error('Error creating location:', err);
     res.status(500).send({ message: 'Error creating location' });
   }
 });
 
+// ✅ Get 5 most recent locations
 router.get('/recent', async (req, res) => {
-    try {
-        const locations = await Location.find().sort({ createdAt: -1 }).limit(5);
-        res.json(locations);
-    } catch (error) {
-        console.error('Error fetching recent locations:', error);
-        res.status(500).json({ message: 'Error fetching locations' });
-    }
+  try {
+    const locations = await Location.find().sort({ createdAt: -1 }).limit(5);
+    res.json(locations);
+  } catch (error) {
+    console.error('Error fetching recent locations:', error);
+    res.status(500).json({ message: 'Error fetching locations' });
+  }
 });
 
-// ✅ Search locations
+// ✅ Search locations by name or type
 router.get('/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ message: 'Missing search query' });
 
   try {
-    const regex = new RegExp(query, 'i');
+    const regex = new RegExp(query, 'i'); // Case-insensitive search
     const results = await Location.find({
       $or: [
         { locationName: { $regex: regex } },
@@ -48,6 +57,7 @@ router.get('/search', async (req, res) => {
 
     res.json(results);
   } catch (err) {
+    console.error('Error searching locations:', err);
     res.status(500).json({ message: 'Server error', error: err });
   }
 });
@@ -58,6 +68,7 @@ router.get('/', async (req, res) => {
     const locations = await Location.find();
     res.status(200).json(locations);
   } catch (error) {
+    console.error('Error fetching all locations:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -69,6 +80,7 @@ router.get('/:id', async (req, res) => {
     if (!location) return res.status(404).json({ error: "Location not found" });
     res.status(200).json(location);
   } catch (error) {
+    console.error('Error fetching location by ID:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -80,6 +92,7 @@ router.put('/:id', async (req, res) => {
     if (!updatedLocation) return res.status(404).json({ error: "Location not found" });
     res.status(200).json(updatedLocation);
   } catch (error) {
+    console.error('Error updating location:', error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -91,6 +104,7 @@ router.delete('/:id', async (req, res) => {
     if (!deletedLocation) return res.status(404).json({ error: "Location not found" });
     res.status(200).json({ message: "Location deleted successfully" });
   } catch (error) {
+    console.error('Error deleting location:', error);
     res.status(500).json({ error: error.message });
   }
 });

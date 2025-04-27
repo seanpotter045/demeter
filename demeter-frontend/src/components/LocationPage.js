@@ -130,6 +130,18 @@ export default function LocationPage() {
           <p className="mb-2 text-lg text-center"><strong>Address:</strong> {location.address}</p>
           <p className="mb-6 text-center">{location.description}</p>
 
+          {location.imageUrl && (
+            <div className="w-full max-w-md mx-auto mb-6">
+              {console.log("Image URL:", location.imageUrl)}
+              <img
+                src={location.imageUrl}
+                alt="Location"
+                className="rounded-lg shadow-lg object-cover w-full h-64"
+              />
+            </div>
+          )}
+
+
           {/* Edit/Delete Location */}
           {user && location.username === user.username && (
             <div className="flex space-x-4 mt-2 mb-8">

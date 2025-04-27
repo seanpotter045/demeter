@@ -1,7 +1,7 @@
-import backendURL from '../apiConfig';
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import backendURL from '../apiConfig';
+import axios from 'axios';
 
 const CreateLocationPage = () => {
   const [locationName, setLocationName] = useState('');
@@ -10,38 +10,49 @@ const CreateLocationPage = () => {
   const [description, setDescription] = useState('');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
   const navigate = useNavigate(); // Initialize navigation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
+      let imageUrl = '';
+  
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+  
+        const uploadResponse = await axios.post(`${backendURL}/api/upload`, formData);
+        imageUrl = uploadResponse.data.url; // ✅ S3 URL returned from your backend
+      }
+  
       const locationData = {
         locationName,
         locationType,
         address,
         description,
         username: user.username,
+        imageUrl, // ✅ Include uploaded image URL
       };
-
+  
       console.log("Sending location data:", locationData);
-
+  
       const response = await axios.post(`${backendURL}/api/locations`, locationData, {
         headers: {
           'Content-Type': 'application/json',
         }
-      });      
-
+      });
+  
       console.log('Location created:', response.data);
-
-      // Redirect to landing page after successful submission
       navigate('/landingPage');
-
+  
     } catch (error) {
       console.error('Error creating location:', error);
       setError('Error creating location');
     }
   };
+  
 
   return (
     <div className="min-h-screen px-6 py-12 bg-inherit text-brunswick font-inknut">
@@ -111,6 +122,33 @@ const CreateLocationPage = () => {
             />
           </div>
   
+          {/* Image Upload */}
+          <div className="col-span-1 md:col-span-2">
+            <label className="block mb-1 font-semibold" htmlFor="photo">Upload a Photo</label>
+            <div className="flex items-center justify-center w-full">
+              <label htmlFor="photo" className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-lg cursor-pointer bg-alabaster hover:bg-gray-100 transition">
+                {file ? (
+                  <p className="text-brunswick">{file.name}</p>
+                ) : (
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg className="w-8 h-8 mb-4 text-brunswick" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16v-4a4 4 0 018 0v4m-5-1h.01M12 17h.01M12 20h.01M12 23h.01M12 26h.01M12 29h.01"></path>
+                    </svg>
+                    <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                    <p className="text-xs text-gray-500">PNG, JPG (max 10MB)</p>
+                  </div>
+                )}
+                <input
+                  id="photo"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => setFile(e.target.files[0])}
+                />
+              </label>
+            </div>
+          </div>
+
           {/* Submit Button */}
           <div className="col-span-1 md:col-span-2 text-center">
             <button
