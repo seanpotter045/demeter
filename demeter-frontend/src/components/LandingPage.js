@@ -76,7 +76,7 @@ export default function LandingPage() {
 
           {/* NEW "View All Locations" Button */}
           <Link
-            to="/allLocations" // <-- make sure you add a route to this page!
+            to="/allLocations"
             className="bg-fern hover:bg-hunter text-alabaster px-4 py-2 rounded font-semibold transition"
           >
             View All
@@ -85,23 +85,36 @@ export default function LandingPage() {
 
         {recentLocations.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
-            {recentLocations.map((location, index) => (
-              <div key={index} className="p-4 border rounded-lg bg-alabaster">
+            {recentLocations.map((location) => (
+              <div key={location._id} className="p-4 border rounded-lg bg-alabaster">
                 <Link to={`/locations/${location._id}`}>
-                  <h3 className="text-lg font-bold text-fern hover:text-hunter">
-                    {location.locationName}
-                  </h3>
+                  {/* Flex row: Location Name + Stars */}
+                  <div className="flex items-center justify-center mb-2">
+                    <h3 className="text-lg font-bold text-fern hover:text-hunter mr-3">
+                      {location.locationName}
+                    </h3>
+
+                    {location.averageRating !== null ? (
+                      <div className="flex">
+                        {renderStars(location.averageRating)}
+                      </div>
+                    ) : (
+                      <p className="italic text-hunter text-sm">Not yet rated</p>
+                    )}
+                  </div>
                 </Link>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Created by: {location.username}</p>
-                <p className="text-sm">Type: {location.locationType}</p>
-                <p className="text-sm">Address: {location.address}</p>
-                <p className="text-sm">Description: {location.description}</p>
+
+                <p className="text-sm text-center mb-1 text-hunter"><strong>Created by:</strong> {location.username}</p>
+                <p className="text-sm text-center mb-1"><strong>Type:</strong> {location.locationType}</p>
+                <p className="text-sm text-center mb-1"><strong>Address:</strong> {location.address}</p>
+                <p className="text-sm text-center">{location.description}</p>
               </div>
             ))}
           </div>
         ) : (
           <p>No recent locations found.</p>
         )}
+
       </div>
     </div>
   );

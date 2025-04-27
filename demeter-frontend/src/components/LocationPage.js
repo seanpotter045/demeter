@@ -10,7 +10,7 @@ export default function LocationPage() {
   const [reviews, setReviews] = useState([]);
   const [user, setUser] = useState(null);
   const [averageRating, setAverageRating] = useState(null);
-  const [isSaved, setIsSaved] = useState(false); // NEW: save status
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -18,7 +18,7 @@ export default function LocationPage() {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
 
-      // Check if saved
+      // Check if this location is saved
       axios.get(`${backendURL}/api/users/${parsedUser._id}`)
         .then(res => {
           const saved = res.data.savedLocations?.includes(id);
@@ -101,7 +101,7 @@ export default function LocationPage() {
 
       {location ? (
         <>
-          {/* Location Name + Save/Unsave Button */}
+          {/* Location Name + Save Button */}
           <div className="flex items-center justify-center mt-8 mb-4 space-x-4">
             <h1 className="text-4xl font-bold text-center">{location.locationName}</h1>
             {user && user.username !== location.username && (
@@ -118,9 +118,7 @@ export default function LocationPage() {
           {/* Average Rating */}
           <div className="mt-2 mb-6 flex justify-center">
             {averageRating ? (
-              <div className="flex">
-                {renderStars(averageRating)}
-              </div>
+              <div className="flex">{renderStars(averageRating)}</div>
             ) : (
               <p className="italic text-brunswick text-center mt-2">Not yet rated</p>
             )}
@@ -132,7 +130,7 @@ export default function LocationPage() {
           <p className="mb-2 text-lg text-center"><strong>Address:</strong> {location.address}</p>
           <p className="mb-6 text-center">{location.description}</p>
 
-          {/* Edit / Delete if user created it */}
+          {/* Edit/Delete Location */}
           {user && location.username === user.username && (
             <div className="flex space-x-4 mt-2 mb-8">
               <Link
@@ -159,7 +157,7 @@ export default function LocationPage() {
             </div>
           )}
 
-          {/* Reviews */}
+          {/* Reviews Section */}
           <div className="mt-8 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold">Reviews</h2>
@@ -177,7 +175,12 @@ export default function LocationPage() {
               reviews.map((review) => (
                 <div key={review._id} className="p-4 border rounded-lg bg-alabaster shadow-lg mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <p><strong>{review.username}</strong> - Rating: {review.rating}</p>
+                    <div className="flex items-center space-x-2">
+                      <p className="font-semibold">{review.username}</p>
+                      <div className="flex">
+                        {renderStars(review.rating)}
+                      </div>
+                    </div>
 
                     {user && user.username === review.username && (
                       <div className="flex space-x-2">
