@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const Location = require('../models/locationModel');
 
 
 router.post('/createUser', async (req, res) => {
@@ -69,8 +70,22 @@ router.get('/users', async (req, res) => {
 
 router.get('/:userId', async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(req.params.userId).lean();
     if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.savedLocations && user.savedLocations.length > 0) {
+      // Check which saved locations still exist
+      const existingLocations = await Location.find({
+        _id: { $in: user.savedLocations }
+      }).select('_id'); // Only pull the _id
+
+      const existingLocationIds = existingLocations.map(loc => loc._id.toString());
+
+      // Filter user's savedLocations to only existing ones
+      user.savedLocations = user.savedLocations.filter(id => existingLocationIds.includes(id.toString()));
+      await User.findByIdAndUpdate(req.params.userId, { savedLocations: user.savedLocations });
+    }
+
     res.json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
