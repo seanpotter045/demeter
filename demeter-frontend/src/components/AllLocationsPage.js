@@ -79,7 +79,6 @@ export default function AllLocationsPage() {
     <div className="min-h-screen px-4 py-10 bg-inherit font-inknut text-brunswick flex flex-col items-center">
       <h1 className="text-4xl font-bold mb-8 text-center">All Locations</h1>
 
-      {/* Filter Section */}
       <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
         <select
           value={sortOption}
@@ -99,35 +98,45 @@ export default function AllLocationsPage() {
           </button>
         )}
 
-        {/* 👇 Locations Count */}
         <div className="text-sm text-hunter font-semibold">
           Showing {filteredLocations.length} {filteredLocations.length === 1 ? 'location' : 'locations'}
         </div>
       </div>
 
-      {/* Location Cards */}
       {filteredLocations.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
           {filteredLocations.map((location) => (
-            <div key={location._id} className="bg-alabaster rounded-lg shadow-md p-6 transform hover:scale-105 transition duration-300 ease-in-out">
-              <Link to={`/locations/${location._id}`}>
-                <h2 className="text-2xl font-bold text-fern hover:text-hunter text-center mb-2">
-                  {location.locationName}
-                </h2>
+            <div key={location._id} className="bg-alabaster rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out flex flex-col">
+              <Link to={`/locations/${location._id}`} className="flex-1 flex flex-col">
+                {location.imageUrl ? (
+                  <div className="w-full h-48 overflow-hidden">
+                    <img
+                      src={location.imageUrl}
+                      alt="Location"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : null}
 
-                <div className="flex justify-center items-center mb-4">
-                  {averageRatings[location._id] !== undefined && averageRatings[location._id] !== null ? (
-                    renderStars(averageRatings[location._id])
-                  ) : (
-                    <p className="italic text-hunter text-sm">Not yet rated</p>
-                  )}
+                <div className={`p-6 flex flex-col items-center ${!location.imageUrl ? 'justify-center flex-1' : ''}`}>
+                  <h2 className="text-2xl font-bold text-fern hover:text-hunter text-center mb-2">
+                    {location.locationName}
+                  </h2>
+
+                  <div className="flex justify-center items-center mb-4">
+                    {averageRatings[location._id] !== undefined && averageRatings[location._id] !== null ? (
+                      renderStars(averageRatings[location._id])
+                    ) : (
+                      <p className="italic text-hunter text-sm">Not yet rated</p>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-center mb-1 text-hunter">Created by: {location.username}</p>
+                  <p className="text-sm text-center mb-1"><strong>Type:</strong> {location.locationType}</p>
+                  <p className="text-sm text-center mb-1"><strong>Address:</strong> {location.address}</p>
+                  <p className="text-sm text-center">{location.description}</p>
                 </div>
               </Link>
-
-              <p className="text-sm text-center mb-1 text-hunter mt-1">Created by: {location.username}</p>
-              <p className="text-sm text-center mb-1"><strong>Type:</strong> {location.locationType}</p>
-              <p className="text-sm text-center mb-1"><strong>Address:</strong> {location.address}</p>
-              <p className="text-sm text-center">{location.description}</p>
             </div>
           ))}
         </div>

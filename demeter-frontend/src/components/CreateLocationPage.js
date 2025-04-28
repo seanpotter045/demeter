@@ -13,46 +13,43 @@ const CreateLocationPage = () => {
   const [file, setFile] = useState(null);
   const navigate = useNavigate(); // Initialize navigation
 
+  // In CreateLocationPage.js inside handleSubmit:
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (!file) {
+      setError('Please upload a photo for the location.');
+      return;
+    }
+
     try {
-      let imageUrl = '';
-  
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-  
-        const uploadResponse = await axios.post(`${backendURL}/api/upload`, formData);
-        imageUrl = uploadResponse.data.url; // ✅ S3 URL returned from your backend
-      }
-  
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await axios.post(`${backendURL}/api/upload`, formData);
+      const imageUrl = uploadResponse.data.url;
+
       const locationData = {
         locationName,
         locationType,
         address,
         description,
         username: user.username,
-        imageUrl, // ✅ Include uploaded image URL
+        imageUrl,
       };
-  
-      console.log("Sending location data:", locationData);
-  
-      const response = await axios.post(`${backendURL}/api/locations`, locationData, {
+
+      await axios.post(`${backendURL}/api/locations`, locationData, {
         headers: {
           'Content-Type': 'application/json',
         }
       });
-  
-      console.log('Location created:', response.data);
+
       navigate('/landingPage');
-  
     } catch (error) {
       console.error('Error creating location:', error);
       setError('Error creating location');
     }
   };
-  
 
   return (
     <div className="min-h-screen px-6 py-12 bg-inherit text-brunswick font-inknut">

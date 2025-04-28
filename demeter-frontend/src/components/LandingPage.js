@@ -51,7 +51,7 @@ export default function LandingPage() {
 
   const renderStars = (rating) => {
     const stars = [];
-    const roundedRating = Math.round(rating); // full stars only
+    const roundedRating = Math.round(rating);
     for (let i = 0; i < 5; i++) {
       if (i < roundedRating) {
         stars.push(<span key={i} className="text-fern text-xl">★</span>);
@@ -70,11 +70,10 @@ export default function LandingPage() {
       <p className="text-xl mb-8">We’re here to help you get off the computer 🌎</p>
 
       {/* Recent Locations */}
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-4xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Recent Locations</h2>
 
-          {/* NEW "View All Locations" Button */}
           <Link
             to="/allLocations"
             className="bg-fern hover:bg-hunter text-alabaster px-4 py-2 rounded font-semibold transition"
@@ -84,37 +83,47 @@ export default function LandingPage() {
         </div>
 
         {recentLocations.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {recentLocations.map((location) => (
-              <div key={location._id} className="p-4 border rounded-lg bg-alabaster">
-                <Link to={`/locations/${location._id}`}>
-                  {/* Flex row: Location Name + Stars */}
-                  <div className="flex items-center justify-center mb-2">
-                    <h3 className="text-lg font-bold text-fern hover:text-hunter mr-3">
+              <div key={location._id} className="flex bg-alabaster border rounded-lg shadow-md overflow-hidden">
+                {/* Text Info Left Side */}
+                <div className="flex-1 p-4 flex flex-col justify-center">
+                  <Link to={`/locations/${location._id}`}>
+                    <h3 className="text-lg font-bold text-fern hover:text-hunter mb-2">
                       {location.locationName}
                     </h3>
+                  </Link>
 
-                    {location.averageRating !== null ? (
-                      <div className="flex">
-                        {renderStars(location.averageRating)}
-                      </div>
-                    ) : (
-                      <p className="italic text-hunter text-sm">Not yet rated</p>
-                    )}
-                  </div>
-                </Link>
+                  {location.averageRating !== null ? (
+                    <div className="flex mb-2">
+                      {renderStars(location.averageRating)}
+                    </div>
+                  ) : (
+                    <p className="italic text-hunter text-sm mb-2">Not yet rated</p>
+                  )}
 
-                <p className="text-sm text-center mb-1 text-hunter"><strong>Created by:</strong> {location.username}</p>
-                <p className="text-sm text-center mb-1"><strong>Type:</strong> {location.locationType}</p>
-                <p className="text-sm text-center mb-1"><strong>Address:</strong> {location.address}</p>
-                <p className="text-sm text-center">{location.description}</p>
+                  <p className="text-sm mb-1"><strong>Created by:</strong> {location.username}</p>
+                  <p className="text-sm mb-1"><strong>Type:</strong> {location.locationType}</p>
+                  <p className="text-sm mb-1"><strong>Address:</strong> {location.address}</p>
+                  <p className="text-sm">{location.description}</p>
+                </div>
+
+                {/* Image Right Side */}
+                {location.imageUrl && (
+                  <div className="w-60 flex items-center justify-center p-2 flex-shrink-0">
+                  <img
+                    src={location.imageUrl}
+                    alt="Location"
+                    className="h-40 object-cover rounded-lg"
+                  />
+                </div>                             
+                )}
               </div>
             ))}
           </div>
         ) : (
           <p>No recent locations found.</p>
         )}
-
       </div>
     </div>
   );

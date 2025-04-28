@@ -60,7 +60,7 @@ const Navbar = () => {
           to="/createLocation"
           className="bg-fern hover:bg-hunter text-alabaster px-4 py-2 rounded font-semibold transition"
         >
-          New Location
+          Got a Spot?
         </Link>
 
         {user && (
