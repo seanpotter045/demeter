@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import backendURL from '../apiConfig';
@@ -16,55 +17,57 @@ export default function ProfilePage() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-
-      // Fetch all locations
-      axios.get(`${backendURL}/api/locations`)
-        .then(res => {
-          const userLocations = res.data.filter(location => location.username === parsedUser.username);
-          setLocations(userLocations);
-
-          axios.get(`${backendURL}/api/reviews`)
-            .then(revRes => {
-              const reviews = revRes.data;
-              const ratingsMap = {};
-              userLocations.forEach((loc) => {
-                const locationReviews = reviews.filter(r => r.locationId === loc._id);
-                if (locationReviews.length > 0) {
-                  const total = locationReviews.reduce((sum, r) => sum + r.rating, 0);
-                  ratingsMap[loc._id] = total / locationReviews.length;
-                } else {
-                  ratingsMap[loc._id] = null;
-                }
-              });
-              setAverageRatings(ratingsMap);
-            })
-            .catch(err => console.error('Error fetching reviews:', err));
-        })
-        .catch(err => {
-          console.error('Error fetching locations:', err);
-          setError('Failed to load locations.');
-        });
-
-      // Fetch user's reviews
-      axios.get(`${backendURL}/api/reviews`)
-        .then(res => {
-          const userReviews = res.data.filter(review => review.username === parsedUser.username);
-          setReviews(userReviews);
-        })
-        .catch(err => console.error('Error fetching reviews:', err));
-
-      // Fetch saved locations
+  
+      // ✅ Fetch the full user data from backend (to get dateOfCreation, profile picture, etc.)
       axios.get(`${backendURL}/api/users/${parsedUser._id}`)
         .then(res => {
+          setUser(res.data);
+  
+          // Fetch all locations
+          axios.get(`${backendURL}/api/locations`)
+            .then(locationRes => {
+              const userLocations = locationRes.data.filter(location => location.username === res.data.username);
+              setLocations(userLocations);
+  
+              axios.get(`${backendURL}/api/reviews`)
+                .then(revRes => {
+                  const reviews = revRes.data;
+                  const ratingsMap = {};
+                  userLocations.forEach((loc) => {
+                    const locationReviews = reviews.filter(r => r.locationId === loc._id);
+                    if (locationReviews.length > 0) {
+                      const total = locationReviews.reduce((sum, r) => sum + r.rating, 0);
+                      ratingsMap[loc._id] = total / locationReviews.length;
+                    } else {
+                      ratingsMap[loc._id] = null;
+                    }
+                  });
+                  setAverageRatings(ratingsMap);
+                })
+                .catch(err => console.error('Error fetching reviews:', err));
+            })
+            .catch(err => {
+              console.error('Error fetching locations:', err);
+              setError('Failed to load locations.');
+            });
+  
+          // Fetch user's reviews
+          axios.get(`${backendURL}/api/reviews`)
+            .then(revRes => {
+              const userReviews = revRes.data.filter(review => review.username === res.data.username);
+              setReviews(userReviews);
+            })
+            .catch(err => console.error('Error fetching reviews:', err));
+  
+          // Fetch saved locations
           const savedIds = res.data.savedLocations || [];
-          Promise.all(savedIds.map(id => 
+          Promise.all(savedIds.map(id =>
             axios.get(`${backendURL}/api/locations/${id}`).then(r => r.data).catch(() => null)
           ))
           .then(fullLocations => {
             const validLocations = fullLocations.filter(loc => loc !== null);
             setSavedLocations(validLocations);
-
+  
             axios.get(`${backendURL}/api/reviews`)
               .then(revRes => {
                 const reviews = revRes.data;
@@ -82,9 +85,21 @@ export default function ProfilePage() {
               });
           });
         })
-        .catch(err => console.error('Error fetching user saved locations:', err));
+        .catch(err => {
+          console.error('Error fetching full user details:', err);
+  
+          // fallback: if fetching full user fails, use the parsed user from localStorage
+          setUser(parsedUser);
+        });
     }
   }, []);
+  
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   const renderStars = (rating) => {
     const stars = [];
@@ -131,7 +146,75 @@ export default function ProfilePage() {
   );
 
   return (
-    <div className="min-h-screen pt-20 px-4 flex flex-col items-center bg-inherit font-inknut text-brunswick">
+    <div className="min-h-screen px-4 flex flex-col items-center bg-inherit font-inknut text-brunswick">
+      {/* Profile Header */}
+      <div className="relative w-full mb-12">
+        {/* Cover Image */}
+        {user?.coverImage ? (
+          <div className="w-full h-72 md:h-80 overflow-hidden shadow-md">
+            <img
+              src={user.coverImage}
+              alt="Cover"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="w-full h-48 md:h-64 bg-sage rounded-lg shadow-md flex items-center justify-center text-brunswick text-xl font-semibold">
+            No Cover Image
+          </div>
+        )}
+
+        {/* Fix spacing below profile image */}
+        <div className="h-12"></div>
+        {/* Profile Picture */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16 flex flex-col items-center">
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt="Profile"
+              className="w-28 h-28 rounded-full border-4 border-alabaster object-cover"
+            />
+          ) : (
+            <div className="w-24 h-24 rounded-full border-4 border-alabaster bg-sage flex items-center justify-center text-brunswick text-2xl font-bold">
+              {user?.username?.charAt(0)}
+            </div>
+          )}
+          
+          {/* Username */}
+          <div className="mt-2 text-center text-brunswick font-bold">@{user?.username}</div>
+
+          {/* Join Date */}
+          {user?.dateOfCreation && (
+            <div className="text-sm text-hunter">
+              Joined {new Date(user.dateOfCreation).toLocaleString('default', { month: 'long', year: 'numeric' })}
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* Fix spacing below profile image */}
+      <div className="h-8"></div>
+
+      {/* Edit Profile Button */}
+      <div className="flex gap-4 mt-4 mb-12">
+        <Link
+          to="/editProfile"
+          className="bg-fern hover:bg-hunter text-alabaster px-6 py-2 rounded font-semibold transition"
+        >
+          Edit Profile
+        </Link>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="bg-imperial hover:bg-red-600 text-alabaster px-6 py-2 rounded font-semibold transition"
+        >
+          Log Out
+        </button>
+      </div>
+
+
       <h1 className="text-4xl font-bold mb-8">My Locations</h1>
 
       {error && <p className="text-imperial mb-6">{error}</p>}
