@@ -1,6 +1,6 @@
 import backendURL from '../apiConfig';
 import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const useQuery = () => new URLSearchParams(useLocation().search);
@@ -13,6 +13,7 @@ const SearchResultsPage = () => {
   const [sortOption, setSortOption] = useState('date');
   const [hideMyLocations, setHideMyLocations] = useState(false);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -87,6 +88,15 @@ const SearchResultsPage = () => {
 
   return (
     <div className="min-h-screen px-4 py-10 bg-inherit font-inknut text-brunswick flex flex-col items-center">
+      <div className="w-full max-w-6xl">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-6 bg-fern hover:bg-hunter text-alabaster px-4 py-2 rounded font-semibold transition"
+        >
+          Go Back
+        </button>
+      </div>
+
       <h1 className="text-4xl font-bold mb-8 text-center">Search Results for "{searchTerm}"</h1>
 
       {/* Filters Section */}
