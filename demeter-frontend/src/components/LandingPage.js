@@ -109,15 +109,14 @@ export default function LandingPage() {
                 </div>
 
                 {/* Image Right Side */}
-                {location.imageUrl && (
-                  <div className="w-60 flex items-center justify-center p-2 flex-shrink-0">
+                <div className="w-60 flex items-center justify-center p-2 flex-shrink-0">
                   <img
-                    src={location.imageUrl}
+                    src={location.imageUrl ? location.imageUrl : "/NoPictureAvailable.png"}
                     alt="Location"
                     className="h-40 object-cover rounded-lg"
                   />
-                </div>                             
-                )}
+                </div>
+
               </div>
             ))}
           </div>

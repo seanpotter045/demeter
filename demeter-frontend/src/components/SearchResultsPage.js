@@ -119,15 +119,14 @@ const SearchResultsPage = () => {
           {filteredResults.map((location) => (
             <div key={location._id} className="bg-alabaster rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out flex flex-col">
               <Link to={`/locations/${location._id}`} className="flex-1 flex flex-col">
-                {location.imageUrl ? (
-                  <div className="w-full h-48 overflow-hidden">
-                    <img
-                      src={location.imageUrl}
-                      alt="Location"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : null}
+              <div className="w-full h-48 overflow-hidden">
+                <img
+                  src={location.imageUrl ? location.imageUrl : "/NoPictureAvailable.png"}
+                  alt="Location"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
 
                 <div className={`p-6 flex flex-col items-center ${!location.imageUrl ? 'justify-center flex-1' : ''}`}>
                   <h2 className="text-2xl font-bold text-fern hover:text-hunter text-center mb-2">

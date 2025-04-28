@@ -117,15 +117,13 @@ export default function ProfilePage() {
   const renderLocationCard = (location, rating) => (
     <div key={location._id} className="flex-shrink-0 w-80 bg-alabaster rounded-lg shadow-md overflow-hidden mr-6 transform hover:scale-105 transition duration-300 ease-in-out">
       <Link to={`/locations/${location._id}`} className="flex flex-col h-full">
-        {location.imageUrl && (
-          <div className="w-full h-48 overflow-hidden">
-            <img
-              src={location.imageUrl}
-              alt="Location"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+        <div className="w-full h-48 overflow-hidden">
+          <img
+            src={location.imageUrl ? location.imageUrl : "/NoPictureAvailable.png"}
+            alt="Location"
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="p-6 flex flex-col items-center flex-1">
           <h2 className="text-2xl font-bold text-fern hover:text-hunter text-center mb-2">
             {location.locationName}
@@ -144,6 +142,7 @@ export default function ProfilePage() {
       </Link>
     </div>
   );
+  
 
   return (
     <div className="min-h-screen px-4 flex flex-col items-center bg-inherit font-inknut text-brunswick">
