@@ -26,6 +26,13 @@ const newUserSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Location'
     }],
+    profilePicture: { 
+      type: String, 
+      default: '' 
+    },
+    coverImage: { type: String, 
+      default: '' 
+    }, 
   },
   { collection: "users" }
 );
