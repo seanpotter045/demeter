@@ -101,6 +101,12 @@ export default function LoginPage() {
             </button>
           </p>
         </div>
+
+        <div className="mt-6 text-center">
+          <p>
+            Please allow some time for the servers to start before going to the next page. Thank You.
+          </p>
+        </div>
       </div>
     </div>
   );
